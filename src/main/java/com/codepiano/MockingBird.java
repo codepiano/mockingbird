@@ -2,6 +2,7 @@ package com.codepiano;
 
 import com.codepiano.exceptions.GlobalExceptionHandler;
 import com.codepiano.handlers.MockHandler;
+import java.util.Collections;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -13,8 +14,6 @@ import org.springframework.web.reactive.function.server.RequestPredicates;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import org.springframework.web.server.WebExceptionHandler;
-
-import java.util.Collections;
 
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 
@@ -28,8 +27,12 @@ public class MockingBird implements WebFluxConfigurer {
 
     @Bean
     public RouterFunction<ServerResponse> routes(MockHandler mockHandler) {
-        return route(RequestPredicates.headers(headers -> Collections.singletonList("kill").equals(headers.header("mockingbird"))).negate(), mockHandler::mock)
-                .andRoute(RequestPredicates.path("/a/*"), mockHandler::mock1);
+        return route(
+                RequestPredicates.headers(
+                        headers -> Collections.singletonList("kill").equals(headers.header("mockingbird")))
+                    .negate(),
+                mockHandler::mock)
+            .andRoute(RequestPredicates.path("/a/*"), mockHandler::mock1);
     }
 
     @Bean
@@ -42,5 +45,4 @@ public class MockingBird implements WebFluxConfigurer {
     public DefaultDataBufferFactory defaultDataBufferFactory() {
         return new DefaultDataBufferFactory();
     }
-
 }

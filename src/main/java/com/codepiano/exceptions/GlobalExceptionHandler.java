@@ -1,5 +1,6 @@
 package com.codepiano.exceptions;
 
+import java.nio.charset.StandardCharsets;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DefaultDataBufferFactory;
@@ -12,8 +13,6 @@ import org.springframework.web.reactive.handler.WebFluxResponseStatusExceptionHa
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
-import java.nio.charset.StandardCharsets;
-
 @Component
 public class GlobalExceptionHandler extends WebFluxResponseStatusExceptionHandler {
 
@@ -23,11 +22,17 @@ public class GlobalExceptionHandler extends WebFluxResponseStatusExceptionHandle
     @Override
     public Mono<Void> handle(ServerWebExchange exchange, Throwable ex) {
         HttpStatus status = resolveStatus(ex);
-        if (status != null && exchange.getResponse().setStatusCode(status)) {
-            ServerHttpResponse response = exchange.getResponse();
-            response.setStatusCode(HttpStatus.OK);
-            response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
-            DataBuffer buf = dataBufferFactory.wrap("Hello from exchange".getBytes(StandardCharsets.UTF_8));
+        ServerHttpResponse response = exchange.getResponse();
+        response.getHeaders().setContentType(MediaType.TEXT_PLAIN);
+        if (status != null && response.setStatusCode(status)) {
+            String content;
+            if (ex instanceof MockingbirdException) {
+                MockingbirdException exception = (MockingbirdException) ex;
+                content = exception.getReason();
+            } else {
+                content = "internal server error";
+            }
+            DataBuffer buf = dataBufferFactory.wrap(content.getBytes(StandardCharsets.UTF_8));
             return response.writeWith(Mono.just(buf));
         }
         return Mono.error(ex);
@@ -44,5 +49,4 @@ public class GlobalExceptionHandler extends WebFluxResponseStatusExceptionHandle
         }
         return status;
     }
-
 }

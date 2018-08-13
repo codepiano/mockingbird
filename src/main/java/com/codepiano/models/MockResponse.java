@@ -7,5 +7,4 @@ import lombok.ToString;
 @Data
 @NoArgsConstructor
 @ToString
-public class MockResponse {
-}
+public class MockResponse {}
