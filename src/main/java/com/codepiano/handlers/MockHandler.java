@@ -33,7 +33,7 @@ public class MockHandler {
         String path = request.path();
         mockRequest.setPath(path);
 
-        mockService.mock(mockRequest);
+        var mockResponse = mockService.mock(mockRequest);
 
         return ServerResponse.ok().body(Mono.just(request.path()), String.class);
     }

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
+@Code(1000)
 public class MockingbirdException extends RuntimeException {
     private String reason;
 }

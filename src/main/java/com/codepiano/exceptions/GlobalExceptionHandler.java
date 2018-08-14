@@ -1,6 +1,9 @@
 package com.codepiano.exceptions;
 
+import com.google.gson.JsonObject;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DefaultDataBufferFactory;
@@ -16,6 +19,8 @@ import reactor.core.publisher.Mono;
 @Component
 public class GlobalExceptionHandler extends WebFluxResponseStatusExceptionHandler {
 
+    private static final String INTERNAL_SERVER_ERROR = "internal server error";
+
     @Autowired
     private DefaultDataBufferFactory dataBufferFactory;
 
@@ -28,9 +33,12 @@ public class GlobalExceptionHandler extends WebFluxResponseStatusExceptionHandle
             String content;
             if (ex instanceof MockingbirdException) {
                 MockingbirdException exception = (MockingbirdException) ex;
-                content = exception.getReason();
+                JsonObject result  = new JsonObject();
+                result.addProperty("code", exception.getClass().getAnnotation(Code.class).value());
+                result.addProperty("reason", exception.getReason());
+                content = result.toString();
             } else {
-                content = "internal server error";
+                content = INTERNAL_SERVER_ERROR;
             }
             DataBuffer buf = dataBufferFactory.wrap(content.getBytes(StandardCharsets.UTF_8));
             return response.writeWith(Mono.just(buf));
