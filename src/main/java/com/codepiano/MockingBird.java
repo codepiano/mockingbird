@@ -1,8 +1,10 @@
 package com.codepiano;
 
 import com.codepiano.exceptions.GlobalExceptionHandler;
+import com.codepiano.handlers.ImitationHandler;
 import com.codepiano.handlers.MockHandler;
 import java.util.Collections;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -10,11 +12,13 @@ import org.springframework.core.annotation.Order;
 import org.springframework.core.io.buffer.DefaultDataBufferFactory;
 import org.springframework.web.reactive.config.EnableWebFlux;
 import org.springframework.web.reactive.config.WebFluxConfigurer;
-import org.springframework.web.reactive.function.server.RequestPredicates;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import org.springframework.web.server.WebExceptionHandler;
 
+import static org.springframework.web.reactive.function.server.RequestPredicates.POST;
+import static org.springframework.web.reactive.function.server.RequestPredicates.headers;
+import static org.springframework.web.reactive.function.server.RequestPredicates.path;
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 
 @SpringBootApplication
@@ -25,14 +29,20 @@ public class MockingBird implements WebFluxConfigurer {
         SpringApplication.run(MockingBird.class, args);
     }
 
+    @Autowired
+    private MockHandler mockHandler;
+
+    @Autowired
+    private ImitationHandler imitationHandler;
+
     @Bean
-    public RouterFunction<ServerResponse> routes(MockHandler mockHandler) {
+    public RouterFunction<ServerResponse> routes() {
         return route(
-                RequestPredicates.headers(
-                        headers -> Collections.singletonList("kill").equals(headers.header("mockingbird")))
-                    .negate(),
-                mockHandler::mock)
-            .andRoute(RequestPredicates.path("/a/*"), mockHandler::mock1);
+                headers(headers -> Collections.singletonList("kill").equals(headers.header("mockingbird")))
+                    .negate()
+                    .and(POST("/imitation")),
+                imitationHandler::imitation)
+            .andRoute(path("/**"), mockHandler::mock);
     }
 
     @Bean

@@ -38,7 +38,4 @@ public class MockHandler {
         return ServerResponse.ok().body(Mono.just(request.path()), String.class);
     }
 
-    public Mono<ServerResponse> mock1(ServerRequest request) {
-        return ServerResponse.ok().body(Mono.just(request.methodName()), String.class);
-    }
 }
