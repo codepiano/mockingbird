@@ -1,12 +1,12 @@
 package com.codepiano.handlers;
 
-import com.codepiano.models.Imitation;
 import com.codepiano.services.ImitationService;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.BodyExtractors;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
@@ -19,9 +19,15 @@ public class ImitationHandler {
     @Autowired
     private ImitationService imitationService;
 
+    @Autowired
+    private JsonParser parser;
+
     public Mono<ServerResponse> imitation(ServerRequest request) {
-        request.bodyToMono(String.class);
-        Imitation imitation = new Imitation();
-        return imitationService.imitation(imitation);
+        return request
+            .bodyToMono(String.class)
+            .map(parser::parse)
+            .map(JsonElement::getAsJsonObject)
+            .map(jsonObject -> imitationService.initImitation(jsonObject))
+            .flatMap(imitation -> ServerResponse.ok().build());
     }
 }

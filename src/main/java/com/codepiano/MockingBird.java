@@ -3,6 +3,7 @@ package com.codepiano;
 import com.codepiano.exceptions.GlobalExceptionHandler;
 import com.codepiano.handlers.ImitationHandler;
 import com.codepiano.handlers.MockHandler;
+import com.google.gson.JsonParser;
 import java.util.Collections;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -37,10 +38,11 @@ public class MockingBird implements WebFluxConfigurer {
 
     @Bean
     public RouterFunction<ServerResponse> routes() {
+
         return route(
                 headers(headers -> Collections.singletonList("kill").equals(headers.header("mockingbird")))
                     .negate()
-                    .and(POST("/imitation")),
+                    .and(POST("/initImitation")),
                 imitationHandler::imitation)
             .andRoute(path("/**"), mockHandler::mock);
     }
@@ -54,5 +56,10 @@ public class MockingBird implements WebFluxConfigurer {
     @Bean
     public DefaultDataBufferFactory defaultDataBufferFactory() {
         return new DefaultDataBufferFactory();
+    }
+
+    @Bean
+    public JsonParser parser() {
+        return new JsonParser();
     }
 }
