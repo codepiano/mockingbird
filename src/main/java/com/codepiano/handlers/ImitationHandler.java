@@ -23,6 +23,7 @@ public class ImitationHandler {
     private JsonParser parser;
 
     public Mono<ServerResponse> imitation(ServerRequest request) {
+        request.cookies().get
         return request
             .bodyToMono(String.class)
             .map(parser::parse)

@@ -17,7 +17,6 @@ import lombok.ToString;
 public class Rule {
 
     private String matchType;
-    private String matchText;
     private Matcher matcher;
     private MockResponse mockResponse;
     private Function<MockRequest, Object> access;

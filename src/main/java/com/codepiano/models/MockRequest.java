@@ -12,4 +12,5 @@ import lombok.ToString;
 public class MockRequest {
     private String mockHost;
     private String path;
+    private String body;
 }

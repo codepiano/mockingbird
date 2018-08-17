@@ -10,7 +10,7 @@ public class StringMatcher implements Matcher {
     private Map<String, Rule> ruleMap = new ConcurrentHashMap<>();
 
     public Optional<Rule> match(Object data) {
-        Rule next = ruleMap.get(data);
+        var next = ruleMap.get(data);
         if (next == null) {
             return Optional.empty();
         } else {

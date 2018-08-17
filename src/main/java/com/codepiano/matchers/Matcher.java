@@ -7,4 +7,6 @@ import lombok.NonNull;
 public interface Matcher {
 
     Optional<Rule> match(@NonNull Object object);
+
+    boolean addData(String text, Rule rule);
 }
