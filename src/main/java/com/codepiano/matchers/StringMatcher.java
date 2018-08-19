@@ -11,10 +11,11 @@ public class StringMatcher implements Matcher {
 
     public Optional<Rule> match(Object data) {
         var next = ruleMap.get(data);
-        if (next == null) {
-            return Optional.empty();
-        } else {
-            return Optional.of(next);
-        }
+        return Optional.ofNullable(next);
+    }
+
+    @Override
+    public boolean addData(String text, Rule rule) {
+        return false;
     }
 }

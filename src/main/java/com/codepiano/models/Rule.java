@@ -9,6 +9,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.springframework.web.reactive.function.server.ServerResponse;
+import reactor.core.publisher.Mono;
+
+import javax.swing.text.html.Option;
 
 @Data
 @NoArgsConstructor
@@ -18,11 +22,10 @@ public class Rule {
 
     private String matchType;
     private Matcher matcher;
-    private MockResponse mockResponse;
-    private Function<MockRequest, Object> access;
+    private Mono<ServerResponse> response;
 
     public Optional<Rule> match(MockRequest mockRequest) {
-        var content = (String) this.getAccess().apply(mockRequest);
-        return this.matcher.match(content);
+        return this.matcher.match(mockRequest);
     }
+
 }

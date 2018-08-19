@@ -9,7 +9,5 @@ import lombok.ToString;
 @NoArgsConstructor
 public class Imitation {
 
-    public static final String DEFAULT_HOST = "mockingbird";
-
     private String host;
 }
