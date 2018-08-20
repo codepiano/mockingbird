@@ -4,8 +4,12 @@ import com.codepiano.models.Rule;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class StringMatcher implements Matcher {
+
+    private static final Logger logger = LoggerFactory.getLogger(StringMatcher.class);
 
     private Map<String, Rule> ruleMap = new ConcurrentHashMap<>();
 
@@ -16,6 +20,10 @@ public class StringMatcher implements Matcher {
 
     @Override
     public boolean addData(String text, Rule rule) {
-        return false;
+        Rule overridedRule = ruleMap.put(text, rule);
+        if (overridedRule != null) {
+            logger.info("rule override, key: {}, rule: {} by new rule: {}", text, overridedRule, rule);
+        }
+        return true;
     }
 }

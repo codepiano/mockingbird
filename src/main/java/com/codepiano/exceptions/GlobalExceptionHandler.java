@@ -2,8 +2,6 @@ package com.codepiano.exceptions;
 
 import com.google.gson.JsonObject;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DefaultDataBufferFactory;
@@ -33,7 +31,7 @@ public class GlobalExceptionHandler extends WebFluxResponseStatusExceptionHandle
             String content;
             if (ex instanceof MockingbirdException) {
                 MockingbirdException exception = (MockingbirdException) ex;
-                JsonObject result  = new JsonObject();
+                JsonObject result = new JsonObject();
                 result.addProperty("code", exception.getClass().getAnnotation(Code.class).value());
                 result.addProperty("reason", exception.getReason());
                 content = result.toString();
