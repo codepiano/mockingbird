@@ -9,6 +9,7 @@ import com.google.gson.JsonObject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,6 +29,7 @@ import static org.springframework.http.ResponseCookie.from;
 import static org.springframework.web.reactive.function.BodyInserters.fromObject;
 
 @Service
+@Slf4j
 public class ImitationService {
 
     private static final List<String> ORDER = List.of("body", "cookies", "path");
@@ -71,6 +73,7 @@ public class ImitationService {
         if (jsonObject.has(key)) {
             var value = jsonObject.get(key).getAsJsonObject();
             var rule = new Rule();
+            rule.setMockEntry(key);
             rule.setMatchType(value.get("match-type").getAsString());
             var matcher = matcherService.getMatcherByType(rule.getMatchType());
             if (matcher.isPresent()) {
@@ -101,7 +104,7 @@ public class ImitationService {
             }
         }
         // 处理 body
-        String body = "";
+        var body = "";
         if (responseData.has(BODY)) {
             body = responseData.get(BODY).getAsString();
             if (StringUtils.isBlank(body)) {
@@ -112,7 +115,7 @@ public class ImitationService {
             status = HttpStatus.NO_CONTENT.value();
         }
         // 生成响应体
-        ServerResponse.BodyBuilder responseBuilder = ServerResponse.status(status);
+        var responseBuilder = ServerResponse.status(status);
         // 处理响应头
         if (responseData.has(HEADERS)) {
             Flux.fromIterable(responseData.getAsJsonObject(HEADERS).entrySet())

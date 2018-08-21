@@ -1,6 +1,7 @@
 package com.codepiano.models;
 
 import com.codepiano.matchers.Matcher;
+import java.util.List;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,10 +17,11 @@ import reactor.core.publisher.Mono;
 public class Rule {
 
     private String matchType;
+    private String mockEntry;
     private Matcher matcher;
     private Mono<ServerResponse> response;
 
-    public Optional<Rule> match(MockRequest mockRequest) {
-        return this.matcher.match(mockRequest);
+    public Optional<Rule> match(List<String> data) {
+        return this.matcher.match(data);
     }
 }

@@ -1,10 +1,9 @@
 package com.codepiano.services;
 
 import com.codepiano.exceptions.NoHostRuleException;
+import com.codepiano.exceptions.NoMatchedMockException;
 import com.codepiano.models.MockRequest;
-import java.util.Optional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.server.ServerResponse;
@@ -14,9 +13,8 @@ import static com.codepiano.MockingBird.HOST;
 import static com.codepiano.MockingBird.PATH;
 
 @Service
+@Slf4j
 public class MockService {
-
-    private static final Logger logger = LoggerFactory.getLogger(MockService.class);
 
     @Autowired
     private RuleService ruleService;
@@ -28,8 +26,11 @@ public class MockService {
         }
         // 优先处理路径
         var pathRules = hostRules.get(PATH);
-        Optional<Mono<ServerResponse>> result = pathRules.process(mockRequest);
-        var serverResponse = ServerResponse.ok();
-        return serverResponse.build();
+        var result = pathRules.process(mockRequest);
+        if (result.isPresent()) {
+            return result.get();
+        } else {
+            throw new NoMatchedMockException();
+        }
     }
 }
