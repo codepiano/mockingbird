@@ -10,6 +10,7 @@ import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 
+import static com.codepiano.MockingBird.BODY;
 import static com.codepiano.MockingBird.DEFAULT_HOST;
 import static com.codepiano.MockingBird.HOST;
 import static com.codepiano.MockingBird.PATH;
@@ -39,6 +40,8 @@ public class MockHandler {
 
         var path = request.path();
         mockRequest.add(PATH, path);
+
+        request.bodyToMono(String.class).subscribe(x -> mockRequest.add(BODY, x));
 
         var mockResponse = mockService.mock(mockRequest);
 

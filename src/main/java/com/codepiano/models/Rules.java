@@ -36,7 +36,7 @@ public class Rules {
                 return Optional.of(rule);
             } else {
                 var data = mockRequest.get(rule.getMockEntry());
-                Optional<Rule> nextRule = rule.match(mockRequest);
+                Optional<Rule> nextRule = rule.match(data);
                 if (nextRule.isPresent()) {
                     return pecking(nextRule.get(), mockRequest);
                 }
